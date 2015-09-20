@@ -5,6 +5,13 @@ See full post on [ReactJS News](http://reactjsnews.com/isomorphic-javascript-wit
 
 Shared JavaScript that runs on both the client & server.
 
+
+### What is this app ?
+
+It pulls links shared in Slack via our custom `/link` slash command.
+
+It will eventually allow users to vote for their faves.
+
 ### Install Instructions
 
 If you would like to download the code and try it for yourself:
