@@ -10,6 +10,7 @@
     "eyes": "^0.1.8",
     "eyespect": "^0.1.10",
     "griddle-react": "^0.1.19",
+    "jquery": "^2.1.4",
     "lodash": "^3.10.1",
     "node-parse-api": "^0.3.8",
     "path": "*",

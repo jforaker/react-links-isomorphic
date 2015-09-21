@@ -1,12 +1,23 @@
 /** @jsx React.DOM */
 
 var React = require('react/addons');
+var Vote = require('./Vote')
+    ;
 
 var Link = React.createClass({
+
     render: function () {
         var link = this.props.link;
+
+        var UpvoteButtonProps = {
+            upvotes: link.upvotes || 0,
+            onUpvote: this.props.handleUpvote,
+            objectId: link.objectId
+        };
+
         return (
             <li className="link">
+                <Vote upvoteButtonProps={UpvoteButtonProps}/>
                 <blockquote>
                     <cite>
                         <div className="screen-name">@{link.user_name}</div>
