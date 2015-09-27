@@ -2,6 +2,7 @@
   "name": "node-authentication",
   "main": "server.js",
   "dependencies": {
+    "bluebird": "^2.10.1",
     "body-parser": "~1.0.0",
     "cookie-parser": "~1.0.0",
     "dotenv": "^1.2.0",
@@ -11,10 +12,15 @@
     "eyespect": "^0.1.10",
     "griddle-react": "^0.1.19",
     "jquery": "^2.1.4",
+    "jquery-deferred": "^0.3.0",
     "lodash": "^3.10.1",
     "node-parse-api": "^0.3.8",
     "path": "*",
-    "react": "~0.12.0"
+    "rc-select": "^4.9.1",
+    "react": "~0.12.0",
+    "react-chosen": "^0.3.8",
+    "request": "^2.64.0",
+    "slack-node": "^0.1.3"
   },
   "devDependencies": {
     "browserify": "~3.20.0",

@@ -1,7 +1,37 @@
 
-var Parse = require('node-parse-api').Parse;
+var Parse = require('node-parse-api').Parse,
+    $ = require('jquery-deferred'),
+    def = $.Deferred()
+    ;
 
-module.exports = new Parse({
-    app_id: process.env.PARSE_APP_ID,
-    master_key: process.env.PARSE_MASTER_KEY
-});
+var ParseLib = function (){};
+
+ParseLib.prototype.getLinks = function () {
+
+    var def = $.Deferred();
+    var opts = {
+        limit: 1000,
+        order: '-upvotes'
+    };
+
+    var P = new Parse({
+        app_id: process.env.PARSE_APP_ID,
+        master_key: process.env.PARSE_MASTER_KEY
+    });
+
+    var cb = function (err, response) {
+        if (err) {
+            def.reject({status: 500, data: {error: err.message}});
+        } else if (response.results && response.results.length) {
+            def.resolve(response.results);
+        } else {
+            def.reject(response);
+        }
+    };
+
+    P.find('Links', opts, cb);
+
+    return def.promise();
+};
+
+module.exports = new ParseLib();

@@ -3,6 +3,7 @@
 var React = require('react/addons'),
     _ = require('lodash'),
     Link = require('./Link'),
+    Filter = require('./Filter'),
     inspect = require('eyespect').inspector()
     ;
 var parse = require('../lib/Parse');
@@ -12,7 +13,8 @@ var App = React.createClass({
 
     getInitialState: function () {
         return {
-            links: this.props.links
+            links: this.props.links,
+            allLinks: _.cloneDeep(this.props.links)
         };
     },
 
@@ -21,8 +23,11 @@ var App = React.createClass({
     },
 
     updatePostsAfterUpvote: function () {
-        var all = _.sortByOrder(this.props.links, ['upvotes'], ['desc']);
-        this.setState({links: all});
+        var all = _.sortByOrder(this.props.links, ['upvotes', 'createdAt'], ['desc', 'desc']);
+
+        this.setState({
+            links: all
+        });
     },
 
     updateAfterUpvote: function (id, count) {
@@ -54,12 +59,31 @@ var App = React.createClass({
         this.updateAfterUpvote(postId, count);
     },
 
+    sortFilter: function (channelId, channelName, e) {
+        e.preventDefault();
+        var id = channelId.replace('id=', '');
+
+        var all = _.filter(this.props.links, function (n) {
+            return n.channel_id === id;
+        });
+
+        this.setState({links: all});
+    },
+
+    clearFilter: function (e) {
+        e.preventDefault();
+        this.setState({links: this.state.allLinks});
+    },
+
     render: function () {
         return (
             <div className="posts-app">
                 <LinkList
                     handleUpvote={this.handleUpvote}
+                    sortFilter={this.sortFilter}
+                    clearFilter={this.clearFilter}
                     links={this.state.links}
+                    channels={this.props.channels}
                     />
             </div>
         );
@@ -70,11 +94,10 @@ var LinkList = React.createClass({
     render: function () {
         var props = this.props;
 
-        console.log('props POSTList' , props);
-
         var links = _.map(this.props.links, function (linkdata) {
             return (
                 <Link
+                    doSomething={props.something}
                     handleUpvote={props.handleUpvote}
                     handleRemoveUpvote={props.handleRemoveUpvote}
                     key={linkdata.objectId}
@@ -85,6 +108,10 @@ var LinkList = React.createClass({
 
         return (
             <ul className="links">
+                <Filter
+                    sortFilter={props.sortFilter}
+                    clearFilter={props.clearFilter}
+                    channels={props.channels}/>
                 {links}
             </ul>
         );

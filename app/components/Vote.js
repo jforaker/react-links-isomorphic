@@ -16,14 +16,22 @@ var Vote = React.createClass({
     render: function () {
         var votes = this.props.upvoteButtonProps.upvotes;
         var id = this.props.upvoteButtonProps.objectId;
-
         var upvoteFunction = this.props.upvoteButtonProps.onUpvote;
 
         return (
-            <a  href="#"
-                onClick={upvoteFunction.bind(null, id, votes)}>
-                votes = {votes}
-            </a>
+            <div className="vote-block">
+                <div className="inner">
+                    <div>
+                        {votes}
+                    </div>
+                    <a
+                        href="#"
+                        className="vote"
+                        onClick={upvoteFunction.bind(null, id, votes)}>
+                        upvote
+                    </a>
+                </div>
+            </div>
         );
     }
 });

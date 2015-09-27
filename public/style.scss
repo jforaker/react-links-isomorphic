@@ -76,6 +76,10 @@ footer {
     }
 }
 
+h1 {
+    text-align: center;
+}
+
 .links {
     max-width: 600px;
     margin: 0 auto;
@@ -86,13 +90,34 @@ footer {
     position: relative;
     display: block;
     overflow: hidden;
-    //max-height: 0px;
     margin: 12px auto;
     list-style-type: none;
     color: #2c3e50;
     border-radius: 3px;
     background: white;
     box-shadow: 0 3px 0 #eee;
+
+    .vote-block {
+
+        display: inline-block;
+        width: 100px;
+
+        .inner {
+            position: absolute;
+            left: 0;
+            top: 0;
+            margin: auto;
+            //border: 1px solid gray;
+            display: inline-block;
+            padding: 10px;
+            border-radius: 50%;
+
+            a {
+                text-decoration: none;
+            }
+        }
+    }
+
     &.active {
         max-height: 125px;
         margin: 20px 0;
@@ -114,8 +139,7 @@ footer {
     blockquote {
         font-size: 14px;
         display: inline-block;
-        float: right;
-        width: calc(100% - 72px);
+        width: calc(100% - 100px);
         margin: 0;
         padding: 10px;
         cite {

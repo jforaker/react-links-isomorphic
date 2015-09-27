@@ -5,8 +5,8 @@
 var React = require('react/addons');
 var LinksApp = require('./components/LinksApp');
 
-var initialState = JSON.parse(document.getElementById('initial-state').innerHTML);
-
+var initialStateLinks = JSON.parse(document.getElementById('initial-state-links').innerHTML);
+var channels = JSON.parse(document.getElementById('initial-state-channels').innerHTML);
 var mountNodes = document.getElementById('react-main-mount');
 
-React.render(<LinksApp links={initialState}/>, mountNodes);
+React.render(<LinksApp links={initialStateLinks} channels={channels}/>, mountNodes);
