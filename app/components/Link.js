@@ -19,6 +19,7 @@ var Link = React.createClass({
             <li className="link">
                 <Vote upvoteButtonProps={UpvoteButtonProps}/>
                 <blockquote>
+                    <img src={link.image}/>
                     <cite>
                         <div className="screen-name">@{link.user_name}</div>
                         <a href={link.url} target="_blank">{link.url}</a>

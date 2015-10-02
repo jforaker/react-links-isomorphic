@@ -4,9 +4,9 @@ var Parse = require('node-parse-api').Parse,
     def = $.Deferred()
     ;
 
-var ParseLib = function (){};
+var ParseHelper = function (){};
 
-ParseLib.prototype.getLinks = function () {
+ParseHelper.prototype.getLinks = function () {
 
     var def = $.Deferred();
     var opts = {
@@ -24,6 +24,7 @@ ParseLib.prototype.getLinks = function () {
             def.reject({status: 500, data: {error: err.message}});
         } else if (response.results && response.results.length) {
             def.resolve(response.results);
+            return response.results;
         } else {
             def.reject(response);
         }
@@ -34,4 +35,4 @@ ParseLib.prototype.getLinks = function () {
     return def.promise();
 };
 
-module.exports = new ParseLib();
+module.exports = new ParseHelper();

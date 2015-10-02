@@ -12,6 +12,7 @@ var parse = require('../lib/Parse');
 var App = React.createClass({
 
     getInitialState: function () {
+        console.log('this.props.links.length', this.props.links.length);
         return {
             links: this.props.links,
             allLinks: _.cloneDeep(this.props.links)
@@ -22,17 +23,29 @@ var App = React.createClass({
         console.log('this componentDidMount', this);
     },
 
-    updatePostsAfterUpvote: function () {
-        var all = _.sortByOrder(this.props.links, ['upvotes', 'createdAt'], ['desc', 'desc']);
+    updatePostsAfterUpvote: function (channel, isFiltered) {
+        var notFIltered = _.sortByOrder(this.props.links, ['upvotes', 'createdAt'], ['desc', 'desc']);
+        var all;
+
+        if(isFiltered){
+            all = _.filter(notFIltered, function (n) {
+                return n.channel_id === channel;
+            });
+        }
+
+        console.log('all', all);
 
         this.setState({
-            links: all
+            links: isFiltered ? all : notFIltered,
+            isFiltered: isFiltered
         });
     },
 
     updateAfterUpvote: function (id, count) {
         var updatedCount = +(++count);
         var parseObj = new Parse.Query('Links');
+        var filter = null;
+        var channel = null;
 
         parseObj.get(id)
             .then(function (linkObj) {
@@ -46,33 +59,47 @@ var App = React.createClass({
                     window.alert('There was an error with your request. Please try again.');
                 }
             });
+
+        //todo -- does not respect if no filter is chosen
+
+
+        if(this.state.isFiltered){
+            channel = _.findWhere(this.props.links, {objectId: id}).channel_id;
+            filter = true;
+        }
         
         _.extend(_.findWhere(this.props.links, {objectId: id}), {
             upvotes: updatedCount
         });
 
-        this.updatePostsAfterUpvote();
+        this.updatePostsAfterUpvote(channel, filter);
     },
 
     handleUpvote: function (postId, count, e) {
+
+        //todo filter should be here
+
         e.preventDefault();
         this.updateAfterUpvote(postId, count);
     },
 
-    sortFilter: function (channelId, channelName, e) {
-        e.preventDefault();
-        var id = channelId.replace('id=', '');
+    sortFilter: function (channelId, e) {
 
         var all = _.filter(this.props.links, function (n) {
-            return n.channel_id === id;
+            return n.channel_id === channelId;
         });
 
-        this.setState({links: all});
+        this.setState({
+            links: all,
+            isFiltered: true
+        });
     },
 
-    clearFilter: function (e) {
-        e.preventDefault();
-        this.setState({links: this.state.allLinks});
+    clearFilter: function () {
+        this.setState({
+            links: this.state.allLinks,
+            isFiltered: true
+        });
     },
 
     render: function () {
@@ -100,7 +127,7 @@ var LinkList = React.createClass({
                     doSomething={props.something}
                     handleUpvote={props.handleUpvote}
                     handleRemoveUpvote={props.handleRemoveUpvote}
-                    key={linkdata.objectId}
+                    key={linkdata.objectId + _.uniqueId()}
                     link={linkdata}
                     />
             )
@@ -111,7 +138,8 @@ var LinkList = React.createClass({
                 <Filter
                     sortFilter={props.sortFilter}
                     clearFilter={props.clearFilter}
-                    channels={props.channels}/>
+                    channels={props.channels}
+                    />
                 {links}
             </ul>
         );

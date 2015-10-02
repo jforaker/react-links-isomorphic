@@ -194,3 +194,131 @@ h1 {
         }
     }
 }
+
+
+
+body > span, body > h1 {
+    float: left;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    margin-bottom: 10px;
+}
+
+span {
+    color: #888888;
+    > b {
+        color: black;
+    }
+}
+
+#selected {
+    float: left;
+    width: 100%;
+    margin-top: 20px;
+}
+
+
+
+$height :40px;
+$spacing :10px;
+$select-colour :#2875C7;
+$font-size :14px;
+$border-colour :#DDD;
+$icon-width: 10px;
+
+div.dropdown-container {
+
+    display: block;
+    width: 100%;
+    margin-top: 60px;
+
+    &.show > div.dropdown-list {
+        //transform: (scale(1, 1));
+        transition: all ease 250ms;
+        height: 200px;
+    }
+
+    > div.dropdown-display {
+        float: left;
+        width: 100%;
+        background: white;
+        height: $height;
+        cursor: pointer;
+        border: solid 1px $border-colour;
+        $icon-width :14px;
+        > * {
+            float: left;
+            height: 100%;
+        }
+        > span {
+            font-size: $font-size;
+            width: 100%;
+            position: relative;
+            padding-right: $icon-width +$spacing*2;
+            padding-left: $spacing;
+        }
+        > i {
+            position: relative;
+            width:$icon-width;
+            margin-left: ($spacing+$icon-width)*-1;
+            font-size: 1.125em;
+            font-weight: bold;
+            padding-right: $spacing;
+            text-align: right;
+            color: black;
+        }
+    }
+
+    > div.dropdown-list {
+        float: left;
+        width: 100%;
+        position: relative;
+        transition: all ease 250ms;
+        height: 0px;
+        overflow: scroll;
+
+        > div {
+            position: absolute;
+            width: 100%;
+            z-index: 2;
+            cursor: pointer;
+            background: white;
+            > div {
+                float: left;
+                width: 100%;
+                padding: 8px 10px;
+                font-size: 14px;
+                border: solid 1px #DDD;
+                border-top: none;
+                color: gray;
+
+                &:hover {
+                    background: #F0F0F0;
+                }
+
+                &.selected {
+                    background: $select-colour;
+                    color: white;
+                }
+
+                > span {
+                    float: left;
+                    width: 100%;
+                    position: relative;
+                    padding-right: $icon-width + $spacing;
+                    color: inherit;
+                }
+                > i {
+                    float: left;
+                    width: $icon-width;
+                    margin-left: 10px;
+                    display: none;
+                }
+                &.selected > i {
+                    display: inline-block;
+                }
+            }
+        }
+    }
+}

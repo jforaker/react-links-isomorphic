@@ -1,40 +1,62 @@
 var React = require('react/addons'),
-    parse = require('../lib/Parse'),
+    parseHelper = require('../lib/Parse'),
     slacker = require('../lib/Slack'),
     inspect = require('eyespect').inspector(),
-    request = require('request'),
     $ = require('jquery-deferred'),
-    _ = require('lodash')
+    _ = require('lodash'),
+    ImageResolver = require('image-resolver')
     ;
 
 LinksApp = React.createFactory(require('../components/LinksApp'));
 
 module.exports = function(app) {
 
-    var links = [];
-    var channels = [];
-
 	app.get('/', function(req, res){
+
+        var links = [];
+        var channels = [];
 
         slacker.getSlackChannels().then(function (data) {
 
-            _.each(data.channels, function (channel) {
+            return _.each(data.channels, function (channel) {
                 channels.push({
-                    channel_name: 'channel_name_' + channel.name,
-                    channel_id: 'channel_id_' + channel.id
+                    name: channel.name,
+                    id: channel.id
                 });
+
+                return channels;
             });
 
-        }).then(function () {
+        }).then(function (channelz) {
 
-            parse.getLinks().then(function (d) {
+            inspect(channelz, 'channels');
 
-                _.each(d, function (item) {
+            var resolver = new ImageResolver();
+            resolver.register(new ImageResolver.Webpage());
+
+            parseHelper.getLinks().then(function (linkz) {
+
+                _.each(linkz, function (item, i) {
                     if (!_.has(item, 'upvotes')) {
                         _.extend(item, {
                             upvotes: 0
                         });
                     }
+                    //if(i < 10){
+                    //
+                    //    //todo promise
+                    //
+                    //    resolver.resolve(item.url, function (result) {
+                    //        if (result) {
+                    //            console.log(result.image);
+                    //            _.extend(item, {
+                    //                image: result.image
+                    //            });
+                    //        } else {
+                    //            console.log('No image found');
+                    //        }
+                    //    });
+                    //}
                     links.push(item);
                 });
 
@@ -46,10 +68,11 @@ module.exports = function(app) {
                     })
                 );
 
-                res.render('index.ejs', {
-                    reactOutput: reactHtml,
-                    state: JSON.stringify(links), //only for pure client side rendering
-                    channels: JSON.stringify(channels)
+                //could make api only by setting res.json and calling get('/') from client
+                res.render('index', {
+                    reactOutput: reactHtml,  //render via server. can remove if also remove <%- reactOutput %> from index.ejs
+                    init_state: JSON.stringify(links), //only for pure client side rendering
+                    channels: JSON.stringify(channelz)
                 });
             });
         });

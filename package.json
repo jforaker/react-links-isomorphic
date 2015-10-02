@@ -11,6 +11,7 @@
     "eyes": "^0.1.8",
     "eyespect": "^0.1.10",
     "griddle-react": "^0.1.19",
+    "image-resolver": "^0.5.4",
     "jquery": "^2.1.4",
     "jquery-deferred": "^0.3.0",
     "lodash": "^3.10.1",

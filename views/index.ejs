@@ -3,6 +3,7 @@
   <head>
     <title>JAKT Slack links</title>
     <link href='/style.css' rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.css"/>
     <script src="//www.parsecdn.com/js/parse-1.6.2.min.js"></script>
   </head>
   <body>
@@ -12,7 +13,7 @@
       <%- reactOutput %>
     </div>
 
-    <script id="initial-state-links" type="application/json"><%- state %></script>
+    <script id="initial-state-links" type="application/json"><%- init_state %></script>
     <script id="initial-state-channels" type="application/json"><%- channels %></script>
 
     <script type="text/javascript">
