@@ -21,6 +21,13 @@ var App = React.createClass({
 
     componentDidMount: function () {
         console.log('this componentDidMount', this);
+
+        var socket = io.connect();
+
+        socket.on('linkSaved', function (data) {
+
+            console.log('data socket' , data);
+        });
     },
 
     updatePostsAfterUpvote: function (channel, isFiltered) {

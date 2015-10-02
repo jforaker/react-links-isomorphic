@@ -3,15 +3,11 @@ var express = require('express'),
     path = require('path'),
     app = express(),
     port = 4444,
-    inspect = require('eyes').inspector({
-        styles: {
-            all: 'magenta',
-            special: 'bold',
-            key: 'bold'
-        }
-    }),
-    bodyParser = require('body-parser'),
-    Parse = require('./app/lib/Parse')
+    http = require('http'),
+    inspect = require('eyes').inspector(),
+    bodyParser = require('body-parser').json(),
+    Parse = require('./app/lib/Parse'),
+    socketio = require('socket.io')
     ;
 
 // Make sure to include the JSX transpiler
@@ -19,9 +15,8 @@ require('node-jsx').install();
 
 // Include static assets. Not advised for production
 app.use(express.static(path.join(__dirname, 'public')));
-// Set view path
+app.use(bodyParser);
 app.set('views', path.join(__dirname, 'views'));
-// set up ejs for templating. You can use whatever
 app.set('view engine', 'ejs');
 
 // Set up Routes for the application
@@ -34,5 +29,10 @@ app.get('*', function (req, res) {
     });
 });
 
-app.listen(port);
-inspect(port, 'Server is Up and Running at Port ');
+var server = http.createServer(app);
+var io = socketio.listen(server);
+app.set('socketio', io); //can call socket io in a route: var socketio = req.app.get('socketio');
+app.set('server', server);
+app.get('server').listen(port, function () {
+    inspect(port, 'Server is Up and Running at Port ');
+});

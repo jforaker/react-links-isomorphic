@@ -9,7 +9,14 @@ var React = require('react/addons'),
 
 LinksApp = React.createFactory(require('../components/LinksApp'));
 
+
+
 module.exports = function(app) {
+
+    /*
+     ngrok http -subdomain=jakt-links 4444
+     */
+
 
 	app.get('/', function(req, res){
 
@@ -77,4 +84,12 @@ module.exports = function(app) {
             });
         });
 	});
+
+    app.post('/saved', function (req, res) {
+
+        inspect(req.body, '/link req.body');
+
+        var socketio = req.app.get('socketio');
+        socketio.emit('linkSaved', req.body);
+    });
 };

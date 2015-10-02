@@ -11,7 +11,7 @@ ParseHelper.prototype.getLinks = function () {
     var def = $.Deferred();
     var opts = {
         limit: 1000,
-        order: '-upvotes'
+        order: '-createdAt' //upvotes
     };
 
     var P = new Parse({
