@@ -6,8 +6,6 @@ var React = require('react/addons'),
     Filter = require('./Filter'),
     inspect = require('eyespect').inspector()
     ;
-var parse = require('../lib/Parse');
-
 
 var App = React.createClass({
 
@@ -15,19 +13,40 @@ var App = React.createClass({
         console.log('this.props.links.length', this.props.links.length);
         return {
             links: this.props.links,
-            allLinks: _.cloneDeep(this.props.links)
+            allLinks: _.cloneDeep(this.props.links),
+            count: 0
         };
     },
 
     componentDidMount: function () {
         console.log('this componentDidMount', this);
 
+        var that = this;
         var socket = io.connect();
 
         socket.on('linkSaved', function (data) {
-
             console.log('data socket' , data);
+            if(!data.installationId){
+                //no installationId means it is new
+                that.addLinkViaSocket(data);
+            }
         });
+    },
+
+    addLinkViaSocket: function (link) {
+        // Get current application state
+        var updatedLinks = this.state.links;
+        var count = this.state.count;
+        // Add link to the beginning of array
+        updatedLinks.unshift(link.object);
+        // Set application state
+        this.setState({links: updatedLinks, count: ++count});
+    },
+
+    dismissNew: function () {
+
+        console.log('dismissed');
+        this.setState({count: 0})
     },
 
     updatePostsAfterUpvote: function (channel, isFiltered) {
@@ -118,9 +137,24 @@ var App = React.createClass({
                     clearFilter={this.clearFilter}
                     links={this.state.links}
                     channels={this.props.channels}
+                    count={this.state.count}
+                    dismissNew={this.dismissNew}
                     />
             </div>
         );
+    }
+});
+
+var NotificationBar = React.createClass({
+    render: function () {
+        var count = this.props.count;
+
+        return (
+            <div className={"notification-bar" + (count > 0 ? ' active' : '')}>
+                <p>There are {count} new tweets!</p>
+                <a href="#" onClick={this.props.onDismissNew}> dismiss</a>
+            </div>
+        )
     }
 });
 
@@ -142,6 +176,11 @@ var LinkList = React.createClass({
 
         return (
             <ul className="links">
+                <NotificationBar
+                    count={props.count}
+                    onDismissNew={props.dismissNew}
+                    />
+
                 <Filter
                     sortFilter={props.sortFilter}
                     clearFilter={props.clearFilter}
@@ -150,6 +189,10 @@ var LinkList = React.createClass({
                 {links}
             </ul>
         );
+
+        //todo -- remember - parent component is App ^^
+
+        //todo - sort by date or upvotes count 
     }
 });
 
