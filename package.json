@@ -10,6 +10,7 @@
     "express": "~4.0.0",
     "eyes": "^0.1.8",
     "eyespect": "^0.1.10",
+    "font-awesome": "^4.4.0",
     "griddle-react": "^0.1.19",
     "http": "0.0.0",
     "image-resolver": "^0.5.4",

@@ -8,21 +8,41 @@ var React = require('react/addons'),
 
 var Dropdown = React.createClass({
     getInitialState: function () {
-        //console.log('this.props dropdown', this.props);
         return {
             listVisible: false,
-            selected: 'All'
+            selected: 'All',
+            currentFilter: 'All'
         };
     },
 
     clear: function (e) {
         e.preventDefault();
-        this.state.selected = 'All';
+        this.setState({
+            currentFilter: 'All'
+        });
         return this.props.clear();
     },
 
+    byVotes: function (e) {
+        e.preventDefault();
+        this.setState({
+            currentFilter: 'byVotes'
+        });
+        return this.props.filterByVotes();
+    },
+
+    mostRecent: function (e) {
+        e.preventDefault();
+        this.setState({
+            currentFilter: 'mostRecent'
+        });
+        return this.props.filterByDate();
+    },
+
     select: function (id, name) {
-        this.state.selected = name;
+        this.setState({
+            selected: name
+        });
         return this.props.selectFilter(id);
     },
 
@@ -53,8 +73,25 @@ var Dropdown = React.createClass({
             );
         });
         var style = {
-            color: 'white'
+            color: 'darkslategray'
         };
+
+        var checkHidden = function (kind) {
+            console.log('this.state.currentFilter', this.state.currentFilter);
+            if (this.state.currentFilter === 'All') {
+                return {
+                    display: 'none'
+                }
+            } else if (this.state.currentFilter === kind){
+                return {
+                    display: 'inline-block'
+                }
+            } else {
+                return {
+                    display: 'none'
+                }
+            }
+        }.bind(this);
 
         return (
             <div>
@@ -71,14 +108,39 @@ var Dropdown = React.createClass({
                         </div>
                     </div>
                 </div>
-                <a
-                    href="#"
-                    style={style}
-                    onClick={this.clear}>
-                    clear filter
-                </a>
+
+                <div className="header-container-container">
+                    <div className="column header-container">
+                        <a
+                            href="#"
+                            style={style}
+                            className={'filterTab'}
+                            onClick={this.clear}>
+                            Clear filter <i className="fa fa-check" style={checkHidden('All')}></i>
+                        </a>
+                    </div>
+                    <div className="column header-container">
+                        <a
+                            href="#"
+                            style={style}
+                            className={'filterTab'}
+                            onClick={this.byVotes}>
+                            Votes <i className="fa fa-check" style={checkHidden('byVotes')}></i>
+                        </a>
+                    </div>
+                    <div className="column header-container">
+                        <a
+                            href="#"
+                            style={style}
+                            className={'filterTab'}
+                            onClick={this.mostRecent}>
+                            Recent <i className="fa fa-check" style={checkHidden('mostRecent')}></i>
+                        </a>
+                    </div>
+                </div>
             </div>
 
+            //todo trickle selected filter to recent and byvotes
         );
     }
 });
@@ -115,6 +177,8 @@ var Filter = React.createClass({
                     list={props.channels}
                     selectFilter={props.sortFilter}
                     clear={props.clearFilter}
+                    filterByVotes={props.doFilterByVotes}
+                    filterByDate={props.doFilterByDate}
                     />
             </div>
         )

@@ -14,6 +14,7 @@ var App = React.createClass({
         return {
             links: this.props.links,
             allLinks: _.cloneDeep(this.props.links),
+            updatedLink: null,
             count: 0
         };
     },
@@ -31,6 +32,10 @@ var App = React.createClass({
                 that.addLinkViaSocket(data);
             }
         });
+
+        socket.on('imageUpdated', function (data) {
+            console.log('data socket imageUpdated', data);
+        });
     },
 
     addLinkViaSocket: function (link) {
@@ -40,7 +45,11 @@ var App = React.createClass({
         // Add link to the beginning of array
         updatedLinks.unshift(link.object);
         // Set application state
-        this.setState({links: updatedLinks, count: ++count});
+        this.setState({
+            links: updatedLinks,
+            count: ++count,
+            updatedLink: link.object
+        });
     },
 
     dismissNew: function () {
@@ -128,6 +137,22 @@ var App = React.createClass({
         });
     },
 
+    doFilterByVotes: function () {
+        var all = _.sortByOrder(this.props.links, ['upvotes'], ['desc']);
+        this.setState({
+            links: all,
+            isFiltered: false
+        });
+    },
+
+    doFilterByDate: function () {
+        var all = _.sortByOrder(this.props.links, ['createdAt'], ['desc']);
+        this.setState({
+            links: all,
+            isFiltered: false
+        });
+    },
+
     render: function () {
         return (
             <div className="posts-app">
@@ -135,10 +160,14 @@ var App = React.createClass({
                     handleUpvote={this.handleUpvote}
                     sortFilter={this.sortFilter}
                     clearFilter={this.clearFilter}
+                    doFilterByVotes={this.doFilterByVotes}
+                    doFilterByDate={this.doFilterByDate}
                     links={this.state.links}
                     channels={this.props.channels}
+                    users={this.props.users}
                     count={this.state.count}
                     dismissNew={this.dismissNew}
+                    updatedLink={this.state.updatedLink}
                     />
             </div>
         );
@@ -151,7 +180,7 @@ var NotificationBar = React.createClass({
 
         return (
             <div className={"notification-bar" + (count > 0 ? ' active' : '')}>
-                <p>There are {count} new tweets!</p>
+                <p>There is {count} new link! @ {this.props.updatedLink.user_name} justadded {this.props.updatedLink.url} </p>
                 <a href="#" onClick={this.props.onDismissNew}> dismiss</a>
             </div>
         )
@@ -161,7 +190,7 @@ var NotificationBar = React.createClass({
 var LinkList = React.createClass({
     render: function () {
         var props = this.props;
-
+        var users = this.props.users;
         var links = _.map(this.props.links, function (linkdata) {
             return (
                 <Link
@@ -170,29 +199,45 @@ var LinkList = React.createClass({
                     handleRemoveUpvote={props.handleRemoveUpvote}
                     key={linkdata.objectId + _.uniqueId()}
                     link={linkdata}
+                    users={users}
                     />
             )
         });
 
-        return (
-            <ul className="links">
-                <NotificationBar
-                    count={props.count}
-                    onDismissNew={props.dismissNew}
-                    />
+        var nots = function () {
+            if (this.props.updatedLink) {
+                return (
+                    <NotificationBar
+                        updatedLink={this.props.updatedLink}
+                        count={props.count}
+                        onDismissNew={props.dismissNew}
+                        />
+                )
+            }
+        }.bind(this);
 
-                <Filter
-                    sortFilter={props.sortFilter}
-                    clearFilter={props.clearFilter}
-                    channels={props.channels}
-                    />
-                {links}
-            </ul>
+        return (
+            <div className="container">
+                <ul className="links">
+
+                    {nots()}
+
+                    <Filter
+                        sortFilter={props.sortFilter}
+                        clearFilter={props.clearFilter}
+                        doFilterByVotes={props.doFilterByVotes}
+                        doFilterByDate={props.doFilterByDate}
+                        channels={props.channels}
+                        />
+                    {links}
+                </ul>
+            </div>
+
         );
 
         //todo -- remember - parent component is App ^^
 
-        //todo - sort by date or upvotes count 
+        //todo - sort by date or upvotes count
     }
 });
 

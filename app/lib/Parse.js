@@ -10,7 +10,7 @@ ParseHelper.prototype.getLinks = function () {
 
     var def = $.Deferred();
     var opts = {
-        limit: 1000,
+        limit: 100,
         order: '-createdAt' //upvotes
     };
 
