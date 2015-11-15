@@ -35,10 +35,10 @@ app.get('*', function (req, res) {
     });
 });
 
-var server = http.createServer(app);
-var io = socketio.listen(server);
-app.set('socketio', io); //can call socket io in a route: var socketio = req.app.get('socketio');
-app.set('server', server);
+//var server = http.createServer(app);
+//var io = socketio.listen(server);
+//app.set('socketio', io); //can call socket io in a route: var socketio = req.app.get('socketio');
+//app.set('server', server);
 //app.get('server').listen(port, function () {
 //    inspect(port, 'Server is Up and Running at Port ');
 //});
