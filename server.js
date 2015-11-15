@@ -2,7 +2,7 @@ require('dotenv').load();
 var express = require('express'),
     path = require('path'),
     app = express(),
-    port = process.env.PORT || 8080,
+    port = process.env.PORT || 3000,
     http = require('http'),
     inspect = require('eyes').inspector(),
     bodyParser = require('body-parser').json(),
