@@ -1,6 +1,9 @@
 {
   "name": "node-authentication",
   "main": "server.js",
+  "engines": {
+    "node": "0.10.x"
+  },
   "dependencies": {
     "bluebird": "^2.10.1",
     "body-parser": "~1.0.0",
