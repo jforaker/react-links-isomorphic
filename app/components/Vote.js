@@ -1,7 +1,6 @@
 /** @jsx React.DOM */
 
 var React = require('react/addons');
-var $ = require('jquery');
 var parse = require('../lib/Parse');
 var _ = require('lodash');
 
