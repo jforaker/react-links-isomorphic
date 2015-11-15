@@ -3,9 +3,3 @@ npm-debug.log
 .env
 .DS_Store
 .idea/
-public/fonts/font-awesome/.npmignore
-public/fonts/font-awesome/HELP-US-OUT.txt
-public/fonts/font-awesome/README.md
-public/fonts/font-awesome/less/
-public/fonts/font-awesome/package.json
-public/fonts/font-awesome/scss/
