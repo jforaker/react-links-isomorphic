@@ -108,7 +108,7 @@ module.exports = function (app) {
 
         inspect(req.body, '/link req.body');
 
-        //var socketio = req.app.get('socketio');
-        //socketio.emit('linkSaved', req.body);
+        var socketio = req.app.get('socketio');
+        socketio.emit('linkSaved', req.body);
     });
 };
