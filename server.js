@@ -12,13 +12,17 @@ var express = require('express'),
     socketio = require('socket.io')
     ;
 
+app.set('port', (process.env.PORT || 5000));
+app.use(express.static(__dirname + '/public'));
+app.set('views', __dirname + '/views');
+
 // Make sure to include the JSX transpiler
 require('node-jsx').install();
 
 // Include static assets. Not advised for productions
-app.use(express.static(path.join(__dirname, 'public')));
+//app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser);
-app.set('views', path.join(__dirname, 'views'));
+//app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 // Set up Routes for the application
@@ -35,6 +39,10 @@ var server = http.createServer(app);
 var io = socketio.listen(server);
 app.set('socketio', io); //can call socket io in a route: var socketio = req.app.get('socketio');
 app.set('server', server);
-app.get('server').listen(port, function () {
-    inspect(port, 'Server is Up and Running at Port ');
+//app.get('server').listen(port, function () {
+//    inspect(port, 'Server is Up and Running at Port ');
+//});
+
+app.listen(app.get('port'), function () {
+    console.log('Node app is running on port', app.get('port'));
 });
