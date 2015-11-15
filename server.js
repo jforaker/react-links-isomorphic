@@ -13,7 +13,7 @@ var express = require('express'),
 // Make sure to include the JSX transpiler
 require('node-jsx').install();
 
-// Include static assets. Not advised for production
+// Include static assets. Not advised for productions
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser);
 app.set('views', path.join(__dirname, 'views'));
