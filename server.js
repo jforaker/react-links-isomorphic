@@ -2,7 +2,7 @@ require('dotenv').load();
 var express = require('express'),
     path = require('path'),
     app = express(),
-    port = 3000,
+    port = 5000,
     http = require('http'),
     inspect = require('eyes').inspector(),
     bodyParser = require('body-parser').json(),
@@ -29,7 +29,7 @@ app.get('*', function (req, res) {
     });
 });
 
-var server = http.createServer(app);
+var server = http.createServer(app).listen(process.env.PORT || 5000);
 var io = socketio.listen(server);
 app.set('socketio', io); //can call socket io in a route: var socketio = req.app.get('socketio');
 app.set('server', server);
