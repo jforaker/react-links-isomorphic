@@ -28,8 +28,7 @@ require('node-jsx').install();
 
 var LinksApp = React.createFactory(require('./app/components/LinksApp'));
 
-// connect to the database
-mongoose.connect(configDB.url); // connect to our database
+mongoose.connect(configDB.url);
 
 app.set('views', __dirname + '/views');
 app.engine('ejs', engine);
