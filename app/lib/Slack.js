@@ -1,14 +1,15 @@
-var Slack = require('slack-node'),
-    $ = require('jquery-deferred'),
-    def = $.Deferred()
-    ;
+var Slack = require('slack-node');
+var $ = require('jquery-deferred');
+var def = $.Deferred();
 
-var Slacker = function (){};
+var Slacker = function (token){
+    this.token = token;
+    this.Slackr = new Slack(this.token);
+};
 
 Slacker.prototype.getSlackChannels = function () {
 
     var def = $.Deferred();
-    var slack = new Slack(process.env.SLACK_API_TOKEN);
 
     var cb = function (err, response) {
         if (err) {
@@ -20,7 +21,7 @@ Slacker.prototype.getSlackChannels = function () {
         }
     };
 
-    slack.api('channels.list', cb);
+    this.Slackr.api('channels.list', cb);
 
     return def.promise();
 };
@@ -28,7 +29,6 @@ Slacker.prototype.getSlackChannels = function () {
 Slacker.prototype.getSlackUsers = function () {
 
     var def = $.Deferred();
-    var slack = new Slack(process.env.SLACK_API_TOKEN);
 
     var cb = function (err, response) {
         if (err) {
@@ -40,9 +40,9 @@ Slacker.prototype.getSlackUsers = function () {
         }
     };
 
-    slack.api('users.list', cb);
+    this.Slackr.api('users.list', cb);
 
     return def.promise();
 };
 
-module.exports = new Slacker();
+module.exports = new Slacker(process.env.SLACK_API_TOKEN);

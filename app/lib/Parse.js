@@ -1,14 +1,12 @@
-
-var Parse = require('node-parse-api').Parse,
-    $ = require('jquery-deferred'),
-    def = $.Deferred()
-    ;
+var Parse = require('node-parse-api').Parse;
+var $ = require('jquery-deferred');
+var def = $.Deferred();
 
 var ParseHelper = function (appId, master_key){
     this.app_id = appId;
     this.master_key = master_key;
 
-    this.P = new Parse({
+    this.Parsr = new Parse({
         app_id: this.app_id,
         master_key: this.master_key
     })
@@ -18,14 +16,9 @@ ParseHelper.prototype.getLinks = function () {
 
     var def = $.Deferred();
     var opts = {
-        limit: 100,
+        limit: 75,
         order: '-createdAt' //upvotess
     };
-
-    var P = new Parse({
-        app_id: process.env.PARSE_APP_ID,
-        master_key: process.env.PARSE_MASTER_KEY
-    });
 
     var cb = function (err, response) {
         if (err) {
@@ -38,11 +31,9 @@ ParseHelper.prototype.getLinks = function () {
         }
     };
 
-    this.P.find('Links', opts, cb);
+    this.Parsr.find('Links', opts, cb);
 
     return def.promise();
 };
-
-
 
 module.exports = new ParseHelper(process.env.PARSE_APP_ID, process.env.PARSE_MASTER_KEY);
