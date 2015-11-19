@@ -3,8 +3,8 @@ var URL = process.env.NODE_ENV === 'production' ? 'https://jakt-slack-links.hero
 
 module.exports = {
     'slackAuth': {
-        'clientID': '2165302478.14797407120',
-        'clientSecret': '872ee7c3eb1936163b2b0d60d31ef121',
+        'clientID': process.env.SLACK_OAUTH_CLIENT_ID,
+        'clientSecret': process.env.SLACK_OAUTH_CLIENT_SECRET,
         'callbackURL': URL + '/auth/slack/callback'
     }
 };
