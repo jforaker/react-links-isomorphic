@@ -1,4 +1,3 @@
-
 /************************************************
  JAKT Slack links isomorphic react app
  created by jforaker https://github.com/jforaker
@@ -56,6 +55,9 @@ passport.deserializeUser(function (id, done) {
         else done(err, null);
     })
 });
+
+
+//todo - separate into modular files...
 
 passport.use(new SlackStrategy({
         clientID: configAuth.slackAuth.clientID,
@@ -115,7 +117,7 @@ passport.use(new SlackStrategy({
                 user.slack.SlackId = profile.id;
                 user.slack.token = accessToken;
                 user.slack.name = profile.displayName;
-                user.slack.email  = profile._json.info.user.profile.email;
+                user.slack.email = profile._json.info.user.profile.email;
 
                 user.save(function (err) {
                     if (err) return done(err);
@@ -164,7 +166,7 @@ app.get('/login', function (req, res) {
 });
 
 /***********************************************
-    Passport slack
+ Passport slack
  ***********************************************/
 
 app.get('/auth/slack', passport.authenticate('slack'));
@@ -206,7 +208,9 @@ app.get('/main', isLoggedIn, function (req, res) {
             parseHelper.getLinks().then(function (linkz) {
 
                 _.each(linkz, function (item, i) {
-                    if (!_.has(item, 'upvotes')) { _.extend(item, { upvotes: 0 }); } //if no upvotes, add 0 value for upvotes
+                    if (!_.has(item, 'upvotes')) {
+                        _.extend(item, {upvotes: 0}); //if link has no upvotes, add 0 value for upvotes
+                    }
                     links.push(item); //return links from /link slash command on parse and extend them with 0 vote ^
                 });
 
@@ -236,11 +240,11 @@ app.get('/main', isLoggedIn, function (req, res) {
 
 app.post('/saved', function (req, res) {
 
-    /****
-         https://www.parse.com/apps/slack-bot/cloud_code/webhook#
-                ^^webhook called when a link is saved - show it in the Notifications component on the frontend
-         https://jakt-slack-links.herokuapp.com/saved
-     ****/
+    /***************************************************
+     https://www.parse.com/apps/slack-bot/cloud_code/webhook#
+        ^^webhook called when a link is saved - show it in the Notifications component on the frontend
+     https://jakt-slack-links.herokuapp.com/saved
+     ***************************************************/
 
     inspect(req.body, '/link req.body');
 
@@ -262,10 +266,3 @@ function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()) return next(); //if authenticated user, do next action, otherwise redirect to login page
     res.redirect('/login');
 }
-
-
-
-
-
-
-
