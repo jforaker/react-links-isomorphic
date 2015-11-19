@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>JAKT Slack links</title>
+    <link href='/style.css' rel="stylesheet">
+    <script src="//www.parsecdn.com/js/parse-1.6.2.min.js"></script>
+    <script type="text/javascript">
+        Parse.initialize("4aM4ir2NIena1vdc2OZgMnH9K3vIg9Ej6LON2j3j", "ucSFa5HkZ0sJ9CdOdF9P5y9FtXFhMFFTwaZaZiaO");
+    </script>
+</head>
+
+<body>
+
+    <% if (userEjs) { %>
+        <header>
+            <% include partials/header %>
+        </header>
+    <% } %>
+
+    <%- body %>
+
+</body>
+</html>

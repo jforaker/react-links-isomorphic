@@ -23,6 +23,7 @@ var User = require('./config/models/user');
 var configAuth = require('./config/auth');
 var slacker = require('./app/lib/Slack');
 var parseHelper = require('./app/lib/Parse');
+var engine = require('ejs-locals');
 require('node-jsx').install();
 
 var LinksApp = React.createFactory(require('./app/components/LinksApp'));
@@ -31,6 +32,7 @@ var LinksApp = React.createFactory(require('./app/components/LinksApp'));
 mongoose.connect(configDB.url); // connect to our database
 
 app.set('views', __dirname + '/views');
+app.engine('ejs', engine);
 app.set('view engine', 'ejs');
 app.set('port', port);
 app.use(cookieParser());
@@ -130,6 +132,7 @@ app.get('/', isLoggedIn, function (req, res) {
         res.redirect('/main');
     } else {
         res.render('login.ejs', {
+            userEjs: null,
             message: req.flash('loginMessage')
         });
     }
@@ -148,7 +151,15 @@ app.get('/logout', function (req, res) {
 });
 
 app.get('/login', function (req, res) {
-    res.render('login.ejs', {message: req.flash('loginMessage')});
+    var currentUser = req.user;
+    if (currentUser) {
+        res.redirect('/main');
+    } else {
+        res.render('login.ejs', {
+            userEjs: null,
+            message: req.flash('loginMessage')
+        });
+    }
 });
 
 //Slack

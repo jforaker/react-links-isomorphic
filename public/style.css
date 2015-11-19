@@ -181,7 +181,8 @@ div.dropdown-container {
 
 #main-title {
   text-align: center;
-  font-weight: bold; }
+  font-weight: bold;
+  margin-bottom: -50px; }
   #main-title img {
     position: relative;
     top: -4px; }

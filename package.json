@@ -19,6 +19,7 @@
     "cookie-session": "*",
     "dotenv": "^1.2.0",
     "ejs": "^2.3.4",
+    "ejs-locals": "^1.0.2",
     "express": "*",
     "express-session": "*",
     "eyes": "^0.1.8",
