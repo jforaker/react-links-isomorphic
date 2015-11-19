@@ -4,20 +4,67 @@ var React = require('react/addons'),
     inspect = require('eyespect').inspector(),
     $ = require('jquery-deferred'),
     _ = require('lodash'),
-    ImageResolver = require('image-resolver')
+    ImageResolver = require('image-resolver'),
+    User = require('../../config/models/User')
     ;
+var Parse = require('parse/node').Parse;
+Parse.initialize(process.env.PARSE_APP_ID, process.env.PARSE_MASTER_KEY);
+
 
 LinksApp = React.createFactory(require('../components/LinksApp'));
 
 
-module.exports = function (app) {
 
-    /*
-     ngrok http -subdomain=jakt-links 4444
-     */
+module.exports = function (app, passport) {
 
 
-    app.get('/', function (req, res) {
+
+    app.get('/', isLoggedIn, function (req, res) {
+        var currentUser = req.user;
+        inspect(currentUser, 'currentUser');
+        if (currentUser) {
+            res.redirect('/main');
+        } else {
+            res.render('login.ejs', {
+                message: req.flash('loginMessage')
+            });
+        }
+    });
+
+
+    app.get('/logout', function (req, res) {
+        req.logout();
+        res.redirect('/');
+    });
+
+    app.get('/login', function (req, res) {
+        res.render('login.ejs', {message: req.flash('loginMessage')});
+    });
+
+    //Slack
+
+    app.get('/auth/slack', passport.authenticate('slack'));
+
+    app.get('/auth/slack/callback',
+        passport.authenticate('slack', { passReqToCallback: true, failureRedirect: '/' }), function (req, res) {
+            console.log('req.user /auth/slack/callback ' , req.user);
+            res.redirect('/main');
+        });
+
+
+    /////
+    app.get('/main', isLoggedIn, function (req, res) {
+
+        inspect(req.user, 'req.user get /main');
+
+        User.findById(req.session.passport.user, function (err, user) {
+            if (err) {
+                console.log(err);
+            } else {
+                inspect(user, 'user fuck ya');
+                //res.render('account', {user: user});
+            }
+        })
 
         var links = [];
         var channels = [];
@@ -61,7 +108,8 @@ module.exports = function (app) {
                                 upvotes: 0
                             });
                         }
-                        if(i < 100){
+                        if (i < 100) {
+
 
                             //todo promise
 
@@ -88,16 +136,19 @@ module.exports = function (app) {
                         LinksApp({
                             links: links, //goes to this.props.links in LinksApp!
                             channels: channels,
-                            users: users
+                            users: users,
+                            userJSON: JSON.stringify(req.user)
                         })
                     );
 
                     //could make api only by setting res.json and calling get('/') from client
-                    res.render('index', {
+                    res.render('main.ejs', {
                         reactOutput: reactHtml,  //render via server. can remove if also remove <%- reactOutput %> from index.ejs
                         links: JSON.stringify(links), //only for pure client side rendering
                         channels: JSON.stringify(channelz),
-                        users: JSON.stringify(users)
+                        users: JSON.stringify(users),
+                        userEjs: req.user,
+                        userJSON: JSON.stringify(req.user)
                     });
                 });
             });
@@ -106,9 +157,31 @@ module.exports = function (app) {
 
     app.post('/saved', function (req, res) {
 
+        /*
+         https://www.parse.com/apps/slack-bot/cloud_code/webhook#
+         https://jakt-slack-links.herokuapp.com/saved
+         */
+
         inspect(req.body, '/link req.body');
 
         var socketio = req.app.get('socketio');
         socketio.emit('linkSaved', req.body);
     });
+
+
 };
+
+// route middleware to ensure user is logged in
+function isLoggedIn(req, res, next) {
+    inspect(req.isAuthenticated(), 'req.isAuthenticated()');
+
+    if (req.isAuthenticated()){
+        return next();
+    }
+
+    res.redirect('/login');
+}
+
+/*
+ ngrok http -subdomain=jakt-links 4444
+ */

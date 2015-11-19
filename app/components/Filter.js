@@ -5,8 +5,26 @@ var React = require('react/addons'),
     $ = require('jquery'),
     _ = require('lodash')
     ;
-
+var ClickMixin2 = {
+    _clickDoc: function (e) {
+        var component = this.refs['dropper'].getDOMNode();
+        if (e.target == component || $(component).has(e.target).length) {
+            this.show(e);
+        } else {
+            this.hide(e);
+        }
+    },
+    componentDidMount: function () {
+        $(document).bind('click', this._clickDoc);
+    },
+    componentWillUnmount: function () {
+        $(document).unbind('click', this._clickDoc);
+    }
+};
 var Dropdown = React.createClass({
+
+    mixins: [ClickMixin2],
+
     getInitialState: function () {
         return {
             listVisible: false,
@@ -48,12 +66,10 @@ var Dropdown = React.createClass({
 
     show: function () {
         this.setState({listVisible: true});
-        $(document).bind('click', this.hide);
     },
 
     hide: function () {
         this.setState({listVisible: false});
-        $(document).unbind('click', this.hide);
     },
 
     render: function () {
@@ -77,7 +93,6 @@ var Dropdown = React.createClass({
         };
 
         var checkHidden = function (kind) {
-            console.log('this.state.currentFilter', this.state.currentFilter);
             if (this.state.currentFilter === 'All') {
                 return {
                     display: 'none'
@@ -96,9 +111,7 @@ var Dropdown = React.createClass({
         return (
             <div>
                 <div className={'dropdown-container' + (this.state.listVisible ? ' show' : '')}>
-                    <div
-                        className={'dropdown-display' + (this.state.listVisible ? ' clicked': '')}
-                        onClick={this.show}>
+                    <div ref='dropper' className={'dropdown-display' + (this.state.listVisible ? ' clicked': '')} >
                         <span>{this.state.selected}</span>
                         <i className="fa fa-angle-down"></i>
                     </div>

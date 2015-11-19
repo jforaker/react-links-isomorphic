@@ -4,7 +4,15 @@ var Parse = require('node-parse-api').Parse,
     def = $.Deferred()
     ;
 
-var ParseHelper = function (){};
+var ParseHelper = function (appId, master_key){
+    this.app_id = appId;
+    this.master_key = master_key;
+
+    this.P = new Parse({
+        app_id: this.app_id,
+        master_key: this.master_key
+    })
+};
 
 ParseHelper.prototype.getLinks = function () {
 
@@ -30,9 +38,11 @@ ParseHelper.prototype.getLinks = function () {
         }
     };
 
-    P.find('Links', opts, cb);
+    this.P.find('Links', opts, cb);
 
     return def.promise();
 };
 
-module.exports = new ParseHelper();
+
+
+module.exports = new ParseHelper(process.env.PARSE_APP_ID, process.env.PARSE_MASTER_KEY);

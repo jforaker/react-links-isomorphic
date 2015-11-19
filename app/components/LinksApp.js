@@ -15,18 +15,19 @@ var App = React.createClass({
             links: this.props.links,
             allLinks: _.cloneDeep(this.props.links),
             updatedLink: null,
-            count: 0
+            count: 0,
+            currentUser: this.props.currentUser
         };
     },
 
     componentDidMount: function () {
-        console.log('this componentDidMount', this);
+        console.log('this componentDidMount', this.state.links);
 
         var that = this;
         var socket = io.connect();
 
         socket.on('linkSaved', function (data) {
-            console.log('data socket' , data);
+           // console.log('data socket' , data);
             if(!data.installationId){
                 //no installationId means it is new
                 that.addLinkViaSocket(data);
@@ -168,6 +169,7 @@ var App = React.createClass({
                     count={this.state.count}
                     dismissNew={this.dismissNew}
                     updatedLink={this.state.updatedLink}
+                    currentUser={this.state.currentUser}
                     />
             </div>
         );
@@ -180,7 +182,7 @@ var NotificationBar = React.createClass({
 
         return (
             <div className={"notification-bar" + (count > 0 ? ' active' : '')}>
-                <p>There is {count} new link! @ {this.props.updatedLink.user_name} justadded {this.props.updatedLink.url} </p>
+                <p>There is {count} new link! @ {this.props.updatedLink.user_name} just added {this.props.updatedLink.url} </p>
                 <a href="#" onClick={this.props.onDismissNew}> dismiss</a>
             </div>
         )
@@ -200,6 +202,7 @@ var LinkList = React.createClass({
                     key={linkdata.objectId + _.uniqueId()}
                     link={linkdata}
                     users={users}
+                    currentUser={props.currentUser}
                     />
             )
         });

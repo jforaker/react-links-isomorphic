@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+    <title>JAKT Slack links</title>
+    <link href='/style.css' rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <% include partials/header %>
+    </header>
+
+    <div class="container">
+
+        <div class="page-header text-center">
+            <h1><i class="fa fa-user"></i> Profile </h1>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                <div class="well">
+
+                    <% if (user.slack) { %>
+                    <p>
+                        <span class="fa fa-slack"></span> @<%= user.slack.name %><br>
+                        <strong>email</strong>: <%= user.slack.email %><br>
+                    </p>
+
+                    <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+                    <% } %>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+    <title>JAKT Slack links</title>
+    <link href='/style.css' rel="stylesheet">
+    <style>
+        body {
+            padding-top:80px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="col-sm-6 col-sm-offset-3">
+
+            <% if (message.length > 0) { %>
+                <div class="alert alert-danger"><%= message %></div>
+            <% } %>
+
+            <div class="jumbotron text-center">
+                <h2><span class="fa fa-lock"></span> jakt links</h2>
+
+                <p>Login with:</p>
+
+                <a href="/auth/slack" class="btn btn-primary"><i class="fa fa-slack"></i> Slack</a>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>
