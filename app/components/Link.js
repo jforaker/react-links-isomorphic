@@ -214,16 +214,16 @@ var Comments = React.createClass({
 
 var User = React.createClass({
 
-    match: function () {
+    matchImage: function () {
         var name = this.props.name;
         var size = this.props.size || 'image_48';
-        return _.findWhere(this.props.users[1], {name: name}).profile[size];
+        return _.findWhere(this.props.users, {name: name}).profile[size];
     },
 
     render: function () {
         var hw = this.props.size ? '24' : '48';
         return (
-            <img height={hw} src={this.match()} width={hw}/>
+            <img height={hw} src={this.matchImage()} width={hw}/>
         )
     }
 });

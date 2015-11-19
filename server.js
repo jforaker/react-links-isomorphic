@@ -27,6 +27,7 @@ var configAuth = require('./config/auth');
 var slacker = require('./app/lib/Slack');
 var parseHelper = require('./app/lib/Parse');
 var engine = require('ejs-locals');
+var async = require('async');
 require('node-jsx').install();
 
 var LinksApp = React.createFactory(require('./app/components/LinksApp'));
@@ -130,7 +131,6 @@ passport.use(new SlackStrategy({
 
 app.get('/', isLoggedIn, function (req, res) {
     var currentUser = req.user;
-    inspect(currentUser.slack.name, 'currentUser name / redirect to /main');
     if (currentUser) {
         res.redirect('/main');
     } else {
@@ -180,62 +180,65 @@ app.get('/auth/slack/callback',
  ***********************************************/
 
 app.get('/main', isLoggedIn, function (req, res) {
-
+    var users = [];
     var links = [];
     var channels = [];
-    var users = [];
 
-    slacker.getSlackUsers().then(function (userdata) {
-        return _.each(userdata, function (user) {
-            users.push(user);  //create users array for frontend matching profile pics etc.
-        });
-
-    }).then(function () {
-
-        slacker.getSlackChannels().then(function (data) {
-            _.each(data.channels, function (channel) {
-                if (!channel.is_archived) {
-                    channels.push({
-                        name: channel.name,
-                        id: channel.id
+    async.parallel({
+            users: function (callback) {
+                slacker.getApi('users.list', function (err, userdata) {
+                    if (err) return callback(err);
+                    _.each(userdata.members, function (user) {
+                        users.push(user);  //create users array for frontend matching profile pics etc.
                     });
-                }
-            });
-            return channels; //get slack channels to store in dropdown filter
-
-        }).then(function (channelz) {
-
-            parseHelper.getLinks().then(function (linkz) {
-
-                _.each(linkz, function (item, i) {
-                    if (!_.has(item, 'upvotes')) {
-                        _.extend(item, {upvotes: 0}); //if link has no upvotes, add 0 value for upvotes
-                    }
-                    links.push(item); //return links from /link slash command on parse and extend them with 0 vote ^
+                    callback(null, users);
+                })
+            },
+            channels: function (callback) {
+                slacker.getApi('channels.list', function (err, data) {
+                    if (err) return callback(err);
+                    _.each(data.channels, function (channel) {
+                        if (!channel.is_archived) {
+                            channels.push({
+                                name: channel.name,
+                                id: channel.id
+                            });
+                        }
+                    });
+                    callback(null, channels); //get slack channels to store in dropdown filter
+                })
+            },
+            links: function (callback) {
+                parseHelper.getLinks(function (err, linkz) {
+                    if (err) return callback(err);
+                    _.each(linkz.results, function (item, i) {
+                        if (!_.has(item, 'upvotes')) _.extend(item, {upvotes: 0}); //if link has no upvotes, add 0 value for upvotes
+                        links.push(item); //return links from /link slash command on parse and extend them with 0 vote ^
+                    });
+                    callback(null, links);
                 });
-
-                // React.renderToString takes your component and generates the markup
-                var reactHtml = React.renderToString(
-                    LinksApp({
-                        links: links, //goes to this.props.links in LinksApp!
-                        channels: channels,
-                        users: users,
-                        userJSON: JSON.stringify(req.user)
-                    })
-                );
-
-                //could make api only by setting res.json and calling get('/') from client
-                res.render('main.ejs', {
-                    reactOutput: reactHtml,  //render via server. can remove if also remove <%- reactOutput %> from index.ejs
-                    links: JSON.stringify(links), //only for pure client side rendering
-                    channels: JSON.stringify(channelz),
-                    users: JSON.stringify(users),
-                    userEjs: req.user,
+            }
+        },
+        function (err, results) {
+            if (err) throw err;
+            // React.renderToString takes your component and generates the markup
+            var reactHtml = React.renderToString(
+                LinksApp({
+                    links: results.links, //goes to this.props.links in LinksApp!
+                    channels: results.channels,
+                    users: results.users,
                     userJSON: JSON.stringify(req.user)
-                });
+                })
+            );
+            res.render('main.ejs', {
+                reactOutput: reactHtml,  //render via server. can remove if also remove <%- reactOutput %> from index.ejs
+                users: JSON.stringify(results.users),
+                channels: JSON.stringify(results.channels),
+                links: JSON.stringify(results.links),   //only for pure client side rendering
+                userEjs: req.user,
+                userJSON: JSON.stringify(req.user)
             });
         });
-    });
 });
 
 app.post('/saved', function (req, res) {

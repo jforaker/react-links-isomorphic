@@ -12,7 +12,7 @@ var ParseHelper = function (appId, master_key){
     })
 };
 
-ParseHelper.prototype.getLinks = function () {
+ParseHelper.prototype.getLinks = function (callback) {
 
     var def = $.Deferred();
     var opts = {
@@ -20,6 +20,7 @@ ParseHelper.prototype.getLinks = function () {
         order: '-createdAt' //upvotess
     };
 
+    //keep old cb func -- this is how to return .then()  to def.promise
     var cb = function (err, response) {
         if (err) {
             def.reject({status: 500, data: {error: err.message}});
@@ -31,9 +32,7 @@ ParseHelper.prototype.getLinks = function () {
         }
     };
 
-    this.Parsr.find('Links', opts, cb);
-
-    return def.promise();
+    this.Parsr.find('Links', opts, callback);
 };
 
 module.exports = new ParseHelper(process.env.PARSE_APP_ID, process.env.PARSE_MASTER_KEY);
