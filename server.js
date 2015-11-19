@@ -28,7 +28,6 @@ require('node-jsx').install();
 var LinksApp = React.createFactory(require('./app/components/LinksApp'));
 
 // connect to the database
-//mongoose.connect('mongodb://localhost/passport-example');
 mongoose.connect(configDB.url); // connect to our database
 
 app.set('views', __dirname + '/views');
