@@ -179,8 +179,12 @@ div.dropdown-container {
   .notification-bar a {
     color: darkslategray; }
 
-h1 {
-  text-align: center; }
+#main-title {
+  text-align: center;
+  font-weight: bold; }
+  #main-title img {
+    position: relative;
+    top: -4px; }
 
 .container {
   -webkit-box-sizing: border-box;

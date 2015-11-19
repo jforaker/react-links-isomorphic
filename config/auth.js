@@ -1,5 +1,5 @@
 
-var URL = process.env.NODE_ENV === 'production' ? 'https://jakt-slack-links.herokuapp.com' : 'http://localhost:3000/';
+var URL = process.env.NODE_ENV === 'production' ? 'https://jakt-slack-links.herokuapp.com' : 'http://localhost:3000';
 
 module.exports = {
 
