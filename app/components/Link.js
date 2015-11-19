@@ -22,14 +22,23 @@ var ClickMixin = {
     }
 };
 
-var ExampleForm = React.createClass({
+var CommentsForm = React.createClass({
 
     mixins: [React.addons.LinkedStateMixin],
 
     getInitialState: function () {
         return {
-            comment: ''
+            comment: '',
+            socket: null
         };
+    },
+
+    componentDidMount: function () {
+
+        var socket = io.connect();
+        this.setState({
+            socket: socket
+        });
     },
 
     handleChange: function (e) {
@@ -38,8 +47,28 @@ var ExampleForm = React.createClass({
         });
     },
 
-    reset: function () {
-        this.props.loadComments();
+    reset: function (comment) {
+        console.log('comment', comment.get('comment'));
+        var that = this;
+        this.state.socket.emit('commentSaved', comment);
+
+        $.ajax({
+            url: 'commentSaved',
+            type: 'POST',
+            data: comment,
+            success: function (data, textStatus, jqXHR) {
+                console.log('arguments succecss commentSaved' , arguments );
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.warn('err commentSaved', arguments)
+            }
+        });
+
+        this.state.socket.on('commentSaved', function (data) {
+            if (data) {
+                that.props.loadComments();
+            }
+        });
     },
 
     submit: function (e) {
@@ -57,11 +86,12 @@ var ExampleForm = React.createClass({
                 Links.id = that.props.linkId;
                 Links.relation('comments').add(myComment);
                 Links.save();
+                return myComment;
             }
-        }).done(function (d) {
+        }).done(function (comment) {
             setTimeout(function () {
                 that.setState({ comment: '' });
-                that.reset();
+                that.reset(comment);
             }, 444);  //fucking parse sucks!
         });
 
@@ -91,7 +121,6 @@ var Comments = React.createClass({
     },
 
     componentDidMount: function(){
-
         this.loadComments();
     },
 
@@ -163,7 +192,7 @@ var Comments = React.createClass({
             <div ref='component'>
                 {commentBubble}
 
-                <ExampleForm linkId={this.props.linkId} currentUser={this.props.currentUser} loadComments={this.loadComments}/>
+                <CommentsForm linkId={this.props.linkId} currentUser={this.props.currentUser} loadComments={this.loadComments}/>
 
                 <ul style={threadShowing}>
 

@@ -34,9 +34,6 @@ var App = React.createClass({
             }
         });
 
-        socket.on('imageUpdated', function (data) {
-            console.log('data socket imageUpdated', data);
-        });
     },
 
     addLinkViaSocket: function (link) {

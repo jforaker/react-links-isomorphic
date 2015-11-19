@@ -252,6 +252,12 @@ app.post('/saved', function (req, res) {
     socketio.emit('linkSaved', req.body);
 });
 
+app.post('/commentSaved', function (req, res) {
+    //when a comment is saved, update ui in
+    var socketio = req.app.get('socketio');
+    socketio.emit('commentSaved', req.body);
+});
+
 var server = http.createServer(app);
 var io = socketio.listen(server);
 app.set('socketio', io); //can call socket io in a route: var socketio = req.app.get('socketio');
