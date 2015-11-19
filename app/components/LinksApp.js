@@ -1,11 +1,8 @@
 /** @jsx React.DOM */
 
-var React = require('react/addons'),
-    _ = require('lodash'),
-    Link = require('./Link'),
-    Filter = require('./Filter'),
-    inspect = require('eyespect').inspector()
-    ;
+var React = require('react/addons');
+var _ = require('lodash');
+var LinkList = require('./LinkList');
 
 var App = React.createClass({
 
@@ -173,72 +170,5 @@ var App = React.createClass({
     }
 });
 
-var NotificationBar = React.createClass({
-    render: function () {
-        var count = this.props.count;
-
-        return (
-            <div className={"notification-bar" + (count > 0 ? ' active' : '')}>
-                <p>There is {count} new link! @ {this.props.updatedLink.user_name} just added {this.props.updatedLink.url} </p>
-                <a href="#" onClick={this.props.onDismissNew}> dismiss</a>
-            </div>
-        )
-    }
-});
-
-var LinkList = React.createClass({
-    render: function () {
-        var props = this.props;
-        var users = this.props.users;
-        var links = _.map(this.props.links, function (linkdata) {
-            return (
-                <Link
-                    doSomething={props.something}
-                    handleUpvote={props.handleUpvote}
-                    handleRemoveUpvote={props.handleRemoveUpvote}
-                    key={linkdata.objectId + _.uniqueId()}
-                    link={linkdata}
-                    users={users}
-                    currentUser={props.currentUser}
-                    />
-            )
-        });
-
-        var nots = function () {
-            if (this.props.updatedLink) {
-                return (
-                    <NotificationBar
-                        updatedLink={this.props.updatedLink}
-                        count={props.count}
-                        onDismissNew={props.dismissNew}
-                        />
-                )
-            }
-        }.bind(this);
-
-        return (
-            <div className="container">
-                <ul className="links">
-
-                    {nots()}
-
-                    <Filter
-                        sortFilter={props.sortFilter}
-                        clearFilter={props.clearFilter}
-                        doFilterByVotes={props.doFilterByVotes}
-                        doFilterByDate={props.doFilterByDate}
-                        channels={props.channels}
-                        />
-                    {links}
-                </ul>
-            </div>
-
-        );
-
-        //todo -- remember - parent component is App ^^
-
-        //todo - sort by date or upvotes count
-    }
-});
 
 module.exports = App;
