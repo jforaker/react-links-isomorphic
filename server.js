@@ -16,6 +16,7 @@ var bodyParser = require('body-parser');
 var socketio = require('socket.io');
 var mongoose = require('mongoose');
 var session = require('express-session');
+var cookieSession = require('cookie-session')
 var cookieParser = require('cookie-parser');
 var flash = require('connect-flash');
 var configDB = require('./config/database.js');
@@ -32,10 +33,9 @@ app.set('port', port);
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-app.use(session({
-    secret: 'Methionylglutaminylarginyltyrosylglutamyl',
-    resave: true,
-    saveUninitialized: true
+app.use(cookieSession({
+    name: 'session',
+    keys: ['foo', 'bar'] 
 }));
 app.use(passport.initialize());
 app.use(passport.session());
