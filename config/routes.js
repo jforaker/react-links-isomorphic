@@ -29,7 +29,8 @@ module.exports = function (app, io) {
     app.get('/profile', isLoggedIn, function (req, res) {
         res.render('profile.ejs', {
             user: req.user,
-            userEjs: req.user
+            userEjs: req.user,
+            isProfile: true
         });
     });
 
@@ -107,7 +108,8 @@ module.exports = function (app, io) {
                     channels: JSON.stringify(results.channels),
                     links: JSON.stringify(results.links),   //only for pure client side rendering
                     userEjs: req.user,
-                    userJSON: JSON.stringify(req.user)
+                    userJSON: JSON.stringify(req.user),
+                    isProfile: false
                 });
             });
     });
