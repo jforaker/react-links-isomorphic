@@ -6,6 +6,7 @@
 var async = require('async');
 var _ = require('lodash');
 var React = require('react/addons');
+var ReactDOMServer = require('react-dom/server');
 var inspect = require('eyes').inspector();
 
 var slacker = require('./lib/Slack');
@@ -94,7 +95,7 @@ module.exports = function (app, io) {
             function (err, results) {
                 if (err) throw err;
                 // React.renderToString takes your component and generates the markup
-                var reactHtml = React.renderToString(
+                var reactHtml = ReactDOMServer.renderToString(
                     LinksApp({
                         links: results.links, //goes to this.props.links in LinksApp!
                         channels: results.channels,
@@ -103,7 +104,7 @@ module.exports = function (app, io) {
                     })
                 );
                 res.render('main.ejs', {
-                    reactOutput: reactHtml,  //render via server. can remove if also remove <%- reactOutput %> from index.ejs
+                    //reactOutput: reactHtml,  //render via server. can remove if also remove <%- reactOutput %> from index.ejs
                     users: JSON.stringify(results.users),
                     channels: JSON.stringify(results.channels),
                     links: JSON.stringify(results.links),   //only for pure client side rendering
