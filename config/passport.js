@@ -26,7 +26,8 @@ module.exports = function (app, passport) {
             clientID: configAuth.slackAuth.clientID,
             clientSecret: configAuth.slackAuth.clientSecret,
             callbackURL: configAuth.slackAuth.callbackURL,
-            scope: 'identify,read,client',
+            scope: 'channels:history, channels:read, emoji:read, files:read, groups:history, groups:read, ' +
+                    'reactions:read, search:read, team:read, usergroups:read, users:read, identify',
             passReqToCallback: true
         },
         function (req, accessToken, refreshToken, obj, profile, done) {
