@@ -62,6 +62,7 @@ module.exports = function (app, io) {
                     slacker.getApi('users.list', function (err, userdata) {
                         if (err) return callback(err);
                         _.each(userdata.members, function (user) {
+                            inspect(user, 'user');
                             users.push(user);  //create users array for frontend matching profile pics etc.
                         });
                         callback(null, users);
